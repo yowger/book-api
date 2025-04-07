@@ -1,0 +1,51 @@
+# .NET Core
+bin/
+obj/
+
+# User-specific files
+.idea/
+.vscode/
+
+# ASP.NET Core
+wwwroot/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# JetBrains Rider
+.idea/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# ASP.NET Core files
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
+# Build results
+out/
+
+# Npm packages
+node_modules/
+
+# Microsoft Visual Studio for Mac
+.vscode/
+
+# Docker
+.docker/
+
+# JetBrains Rider project files
+.idea/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
