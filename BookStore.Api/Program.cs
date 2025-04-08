@@ -1,8 +1,9 @@
 using BookStore.Api.Entities;
+using FluentValidation;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -92,8 +93,18 @@ booksGroup.MapGet("/{id}", (Guid id) =>
     return Results.Ok(book.ToBookDtoV1());
 }).WithName(GetBookEndpointName);
 
-booksGroup.MapPost("/", (CreateBookDtoV1 createBookDto) =>
+booksGroup.MapPost("/", (CreateBookDtoV1 createBookDto, IValidator<CreateBookDtoV1> validator) =>
 {
+    // for now, validate and throw when global exception handler created.
+    var validationResult = validator.Validate(createBookDto);
+
+    if (!validationResult.IsValid)
+    {
+        var problemDetails = new HttpValidationProblemDetails(validationResult.ToDictionary());
+
+        return Results.BadRequest(problemDetails);
+    }
+
     Book newBook = new Book
     {
         Id = Guid.NewGuid(),
