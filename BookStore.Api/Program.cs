@@ -71,14 +71,16 @@ book2.BookCategories.Add(new BookCategory
 
 List<Book> books = new List<Book> { book1, book2 };
 
-app.MapGet("/books", () =>
+var booksGroup = app.MapGroup("/books");
+
+booksGroup.MapGet("/", () =>
 {
     var bookDtos = books.Select(book => book.ToBookDtoV1()).ToList();
 
     return bookDtos;
 });
 
-app.MapGet("/books/{id}", (Guid id) =>
+booksGroup.MapGet("/{id}", (Guid id) =>
 {
     Book? book = books.FirstOrDefault(book => book.Id == id);
 
@@ -90,7 +92,7 @@ app.MapGet("/books/{id}", (Guid id) =>
     return Results.Ok(book.ToBookDtoV1());
 }).WithName(GetBookEndpointName);
 
-app.MapPost("/books", (CreateBookDtoV1 createBookDto) =>
+booksGroup.MapPost("/", (CreateBookDtoV1 createBookDto) =>
 {
     Book newBook = new Book
     {
