@@ -38,13 +38,15 @@ var book1 = new Book
     Author = author
 };
 
-book1.BookCategories.Add(new BookCategory
+BookCategory bookCategory = new BookCategory
 {
     BookId = book1.Id,
     Book = book1,
     CategoryId = category.Id,
     Category = category
-});
+};
+
+book1.BookCategories.Add(bookCategory);
 
 var book2 = new Book
 {
@@ -68,6 +70,7 @@ book2.BookCategories.Add(new BookCategory
 List<Book> books = new List<Book> { book1, book2 };
 
 app.MapGet("/", () => "Hello World");
+
 app.MapGet("/books", () =>
 {
     var bookDtos = books.Select(book => new BookDto
@@ -83,6 +86,7 @@ app.MapGet("/books", () =>
 
     return bookDtos;
 });
+
 app.MapGet("/books/{id}", (Guid id) =>
 {
     Book? book = books.FirstOrDefault(book => book.Id == id);
@@ -105,6 +109,36 @@ app.MapGet("/books/{id}", (Guid id) =>
 
     return Results.Ok(bookDto);
 });
+
+app.MapPost("/books", (CreateBookDto createBookDto) =>
+{
+    Book newBook = new Book
+    {
+        Id = Guid.NewGuid(),
+        Title = createBookDto.Title,
+        Description = createBookDto.Description,
+        PublishedDate = createBookDto.PublishedDate,
+        Price = createBookDto.Price,
+        AuthorId = createBookDto.AuthorId,
+        Author = author
+    };
+
+    foreach (var categoryId in createBookDto.CategoryIds)
+    {
+        newBook.BookCategories.Add(new BookCategory
+        {
+            BookId = newBook.Id,
+            Book = newBook,
+            CategoryId = categoryId,
+            Category = category
+        });
+    }
+
+    books.Add(newBook);
+
+    return Results.Created($"/books/${newBook.Id}", newBook.Id);
+});
+
 
 app.Run();
 
