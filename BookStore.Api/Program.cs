@@ -15,6 +15,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+const string GetBookEndpointName = "GetBookById";
+
 Author author = new Author
 {
     Id = Guid.NewGuid(),
@@ -108,7 +110,7 @@ app.MapGet("/books/{id}", (Guid id) =>
     };
 
     return Results.Ok(bookDto);
-});
+}).WithName(GetBookEndpointName);
 
 app.MapPost("/books", (CreateBookDto createBookDto) =>
 {
@@ -136,7 +138,7 @@ app.MapPost("/books", (CreateBookDto createBookDto) =>
 
     books.Add(newBook);
 
-    return Results.Created($"/books/${newBook.Id}", newBook.Id);
+    return Results.CreatedAtRoute(GetBookEndpointName, new { id = newBook.Id }, createBookDto);
 });
 
 
