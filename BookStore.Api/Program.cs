@@ -71,11 +71,9 @@ book2.BookCategories.Add(new BookCategory
 
 List<Book> books = new List<Book> { book1, book2 };
 
-app.MapGet("/", () => "Hello World");
-
 app.MapGet("/books", () =>
 {
-    var bookDtos = books.Select(book => new BookDto
+    var bookDtos = books.Select(book => new BookDtoV1
     {
         Id = book.Id,
         Title = book.Title,
@@ -98,21 +96,10 @@ app.MapGet("/books/{id}", (Guid id) =>
         return Results.NotFound();
     }
 
-    var bookDto = new BookDto
-    {
-        Id = book.Id,
-        Title = book.Title,
-        Description = book.Description,
-        PublishedDate = book.PublishedDate,
-        Price = book.Price,
-        AuthorName = book.Author.Name,
-        Categories = book.BookCategories.Select(bc => bc.Category.Name).ToList()
-    };
-
-    return Results.Ok(bookDto);
+    return Results.Ok(book.ToBookDtoV1());
 }).WithName(GetBookEndpointName);
 
-app.MapPost("/books", (CreateBookDto createBookDto) =>
+app.MapPost("/books", (CreateBookDtoV1 createBookDto) =>
 {
     Book newBook = new Book
     {
@@ -138,24 +125,12 @@ app.MapPost("/books", (CreateBookDto createBookDto) =>
 
     books.Add(newBook);
 
-    var bookDto = new BookDto
-    {
-        Id = newBook.Id,
-        Title = newBook.Title,
-        Description = newBook.Description,
-        PublishedDate = newBook.PublishedDate,
-        Price = newBook.Price,
-        AuthorName = newBook.Author.Name,
-        Categories = newBook.BookCategories.Select(bc => bc.Category.Name).ToList()
-    };
-
     return Results.CreatedAtRoute(
         routeName: GetBookEndpointName,
         routeValues: new { id = newBook.Id },
-        value: bookDto
+        value: newBook.ToBookDtoV1()
     );
 });
-
 
 app.Run();
 

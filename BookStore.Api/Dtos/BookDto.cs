@@ -1,4 +1,4 @@
-public class BookDto
+public class BookDtoV1
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = default!;
@@ -9,7 +9,7 @@ public class BookDto
     public List<string> Categories { get; set; } = new List<string>();
 }
 
-public class CreateBookDto
+public class CreateBookDtoV1
 {
     public string Title { get; set; } = default!;
     public string Description { get; set; } = default!;
