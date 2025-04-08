@@ -73,16 +73,7 @@ List<Book> books = new List<Book> { book1, book2 };
 
 app.MapGet("/books", () =>
 {
-    var bookDtos = books.Select(book => new BookDtoV1
-    {
-        Id = book.Id,
-        Title = book.Title,
-        Description = book.Description,
-        PublishedDate = book.PublishedDate,
-        Price = book.Price,
-        AuthorName = book.Author.Name,
-        Categories = book.BookCategories.Select(bookCategory => bookCategory.Category.Name).ToList()
-    }).ToList();
+    var bookDtos = books.Select(book => book.ToBookDtoV1()).ToList();
 
     return bookDtos;
 });
