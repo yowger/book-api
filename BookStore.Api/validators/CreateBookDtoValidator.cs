@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace BookStore.Api.validators;
 
-public class CreateBookDtoValidator : AbstractValidator<CreateBookDtoV1>
+internal sealed class CreateBookDtoValidator : AbstractValidator<CreateBookDtoV1>
 {
     public CreateBookDtoValidator()
     {
