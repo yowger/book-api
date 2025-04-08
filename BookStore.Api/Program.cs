@@ -138,7 +138,22 @@ app.MapPost("/books", (CreateBookDto createBookDto) =>
 
     books.Add(newBook);
 
-    return Results.CreatedAtRoute(GetBookEndpointName, new { id = newBook.Id }, createBookDto);
+    var bookDto = new BookDto
+    {
+        Id = newBook.Id,
+        Title = newBook.Title,
+        Description = newBook.Description,
+        PublishedDate = newBook.PublishedDate,
+        Price = newBook.Price,
+        AuthorName = newBook.Author.Name,
+        Categories = newBook.BookCategories.Select(bc => bc.Category.Name).ToList()
+    };
+
+    return Results.CreatedAtRoute(
+        routeName: GetBookEndpointName,
+        routeValues: new { id = newBook.Id },
+        value: bookDto
+    );
 });
 
 
