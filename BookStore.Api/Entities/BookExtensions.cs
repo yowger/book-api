@@ -4,15 +4,14 @@ public static class BookExtensions
 {
     public static BookDtoV1 ToBookDtoV1(this Book book)
     {
-        return new BookDtoV1
-        {
-            Id = book.Id,
-            Title = book.Title,
-            Description = book.Description,
-            PublishedDate = book.PublishedDate,
-            Price = book.Price,
-            AuthorName = book.Author.Name,
-            Categories = book.BookCategories.Select(bookCategory => bookCategory.Category.Name).ToList()
-        };
+        return new BookDtoV1(
+            book.Id,
+            book.Title,
+            book.Description,
+            book.PublishedDate,
+            book.Price,
+            book.Author.Name,
+            book.BookCategories.Select(bookCategory => bookCategory.Category.Name).ToList()
+        );
     }
 }
