@@ -85,7 +85,7 @@ app.MapGet("/books", () =>
 });
 app.MapGet("/books/{id}", (Guid id) =>
 {
-    var book = books.FirstOrDefault(book => book.Id == id);
+    Book? book = books.FirstOrDefault(book => book.Id == id);
 
     if (book is null)
     {
