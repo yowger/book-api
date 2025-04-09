@@ -5,7 +5,7 @@ namespace BookStore.Api.Data;
 public static class InMemoryBooksData
 {
     public static Author Author;
-    public static Category Category;
+    public static List<Category> Categories;
     public static List<Book> Books;
 
     static InMemoryBooksData()
@@ -16,10 +16,18 @@ public static class InMemoryBooksData
             Name = "J.K. Rowling"
         };
 
-        Category = new Category
+        Categories = new List<Category>
         {
-            Id = Guid.NewGuid(),
-            Name = "Fantasy"
+            new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Fantasy"
+            },
+            new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Adventure"
+            }
         };
 
         var book1 = new Book
@@ -37,8 +45,8 @@ public static class InMemoryBooksData
         {
             BookId = book1.Id,
             Book = book1,
-            CategoryId = Category.Id,
-            Category = Category
+            CategoryId = Categories[0].Id,
+            Category = Categories[0]
         });
 
         var book2 = new Book
@@ -56,8 +64,8 @@ public static class InMemoryBooksData
         {
             BookId = book2.Id,
             Book = book2,
-            CategoryId = Category.Id,
-            Category = Category
+            CategoryId = Categories[0].Id,
+            Category = Categories[0]
         });
 
         Books = new List<Book> { book1, book2 };

@@ -1,5 +1,6 @@
 using BookStore.Api.Data;
 using BookStore.Api.Entities;
+using BookStore.Api.Interfaces;
 using FluentValidation;
 
 namespace BookStore.Api.Endpoints;
@@ -11,16 +12,16 @@ public static class BooksEndpoints
     {
         var booksGroup = routes.MapGroup("/books");
 
-        booksGroup.MapGet("/", () =>
+        booksGroup.MapGet("/", (IBookRepository bookRepository) =>
         {
-            var bookDtos = InMemoryBooksData.Books.Select(book => book.ToBookDtoV1()).ToList();
+            var bookDtos = bookRepository.GetAll().Select(book => book.ToBookDtoV1()).ToList();
 
-            return bookDtos;
+            return Results.Ok(bookDtos);
         });
 
-        booksGroup.MapGet("/{id}", (Guid id) =>
+        booksGroup.MapGet("/{id}", (Guid id, IBookRepository bookRepository) =>
         {
-            Book? book = InMemoryBooksData.Books.FirstOrDefault(book => book.Id == id);
+            Book? book = bookRepository.GetById(id);
 
             if (book is null)
             {
@@ -30,7 +31,12 @@ public static class BooksEndpoints
             return Results.Ok(book.ToBookDtoV1());
         }).WithName(GetBookEndpointName);
 
-        booksGroup.MapPost("/", (CreateBookDtoV1 createBookDto, IValidator<CreateBookDtoV1> validator) =>
+        booksGroup.MapPost("/",
+        (
+            IBookRepository bookRepository,
+            CreateBookDtoV1 createBookDto,
+            IValidator<CreateBookDtoV1> validator
+        ) =>
         {
             // for now, validate and throw when global exception handler created.
             var validationResult = validator.Validate(createBookDto);
@@ -53,16 +59,21 @@ public static class BooksEndpoints
 
             foreach (var categoryId in createBookDto.CategoryIds)
             {
-                newBook.BookCategories.Add(new BookCategory
+                var category = InMemoryBooksData.Categories.FirstOrDefault(c => c.Id == categoryId);
+
+                if (category != null)
                 {
-                    BookId = newBook.Id,
-                    Book = newBook,
-                    CategoryId = categoryId,
-                    Category = InMemoryBooksData.Category
-                });
+                    newBook.BookCategories.Add(new BookCategory
+                    {
+                        BookId = newBook.Id,
+                        Book = newBook,
+                        CategoryId = category.Id,
+                        Category = category
+                    });
+                }
             }
 
-            InMemoryBooksData.Books.Add(newBook);
+            bookRepository.Add(newBook);
 
             return Results.CreatedAtRoute(
                 routeName: GetBookEndpointName,
@@ -71,6 +82,73 @@ public static class BooksEndpoints
             );
         });
 
+        booksGroup.MapPut("/{id}",
+        (
+            Guid id,
+            IBookRepository bookRepository,
+            UpdateBookDtoV1 updateBookDto,
+            IValidator<UpdateBookDtoV1> validator
+        ) =>
+        {
+            var validationResult = validator.Validate(updateBookDto);
+
+            // for now, validate and throw when global exception handler created.
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
+            var existingBook = bookRepository.GetById(id);
+
+            if (existingBook is null)
+            {
+                return Results.NotFound();
+            }
+
+            existingBook.Title = updateBookDto.Title;
+            existingBook.Description = updateBookDto.Description;
+            existingBook.PublishedDate = updateBookDto.PublishedDate;
+            existingBook.Price = updateBookDto.Price;
+            existingBook.AuthorId = updateBookDto.AuthorId;
+
+            existingBook.BookCategories.Clear();
+            foreach (var categoryId in updateBookDto.CategoryIds)
+            {
+                var category = InMemoryBooksData.Categories.FirstOrDefault(c => c.Id == categoryId);
+
+                if (category != null)
+                {
+                    existingBook.BookCategories.Add(new BookCategory
+                    {
+                        BookId = existingBook.Id,
+                        Book = existingBook,
+                        CategoryId = category.Id,
+                        Category = category
+                    });
+                }
+            }
+
+            bookRepository.Update(existingBook);
+
+            return Results.NoContent();
+        });
+
+        booksGroup.MapDelete("/{id}", (Guid id, IBookRepository bookRepository) =>
+            {
+                var book = bookRepository.GetById(id);
+
+                if (book is null)
+                {
+                    return Results.NotFound();
+                }
+
+                bookRepository.Delete(id);
+
+                return Results.NoContent();
+            });
+
         return booksGroup;
     }
+
+
 }

@@ -16,3 +16,13 @@ public record CreateBookDtoV1(
     Guid AuthorId,
     List<Guid> CategoryIds
 );
+
+public record UpdateBookDtoV1
+(
+     string Title,
+    string Description,
+    DateTime PublishedDate,
+    decimal Price,
+    Guid AuthorId,
+    List<Guid> CategoryIds
+);
