@@ -1,6 +1,6 @@
 using BookStore.Api.Entities;
 
-namespace BookStore.Api.Data;
+namespace BookStore.Api.MockData;
 
 public static class InMemoryBooksData
 {
