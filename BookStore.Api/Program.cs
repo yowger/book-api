@@ -13,6 +13,7 @@ builder.Services.AddSingleton<IBookRepository, InMemoryBooksRepository>();
 builder.Services.AddDbContext<BookStoreContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("BookStoreContext");
+      options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     var serverVersion = new MySqlServerVersion(new Version(8, 0, 40));
 
     options.UseMySql(connectionString, serverVersion);
