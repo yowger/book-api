@@ -19,17 +19,18 @@ builder.Services.AddDbContext<BookStoreContext>(options =>
 
     options.UseMySql(connectionString, serverVersion);
 
-    // if (builder.Environment.IsDevelopment())
-    // {
-    //     options
-    //         .LogTo(Console.WriteLine, LogLevel.Information)
-    //         .EnableSensitiveDataLogging()
-    //         .EnableDetailedErrors();
-    // }
+    if (builder.Environment.IsDevelopment())
+    {
+        options
+            .LogTo(Console.WriteLine, LogLevel.Information)
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors();
+    }
 });
 
 
 var app = builder.Build();
+app.Services.InitializeDb();
 app.MapBooksEndpoints();
 
 if (app.Environment.IsDevelopment())
@@ -93,7 +94,7 @@ if (app.Environment.IsDevelopment())
             Description = "The first part of the epic journey to destroy the One Ring.",
             PublishedDate = new DateTime(1954, 7, 29),
             Price = 25.99m,
-            Author = author3, 
+            Author = author3,
         };
 
         context.Books.Add(book1);
