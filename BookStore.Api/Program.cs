@@ -11,7 +11,8 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInte
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<BookStoreContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("BookStoreContext");
+    var connectionString = builder.Configuration.GetConnectionString("BookStoreContext")
+        ?? throw new InvalidOperationException("Connection string 'BookStoreContext' not found.");
     var serverVersion = ServerVersion.AutoDetect(connectionString);
 
     options.UseMySql(connectionString, serverVersion);
