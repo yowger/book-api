@@ -8,7 +8,12 @@ namespace BookStore.Api.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddDatabaseContext(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
+    public static IServiceCollection AddDatabaseContext
+    (
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IWebHostEnvironment environment
+    )
     {
         var connectionString = configuration.GetConnectionString("BookStoreContext")
             ?? throw new InvalidOperationException("Connection string 'BookStoreContext' not found.");
