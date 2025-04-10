@@ -12,8 +12,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<BookStoreContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("BookStoreContext");
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-    var serverVersion = new MySqlServerVersion(new Version(8, 0, 40));
+    var serverVersion = ServerVersion.AutoDetect(connectionString);
 
     options.UseMySql(connectionString, serverVersion);
 
