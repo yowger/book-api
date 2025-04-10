@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Api.Repositories;
 
-public class EntityFrameworkCategoryRepository : ICategoryInterface
+public class EntityFrameworkCategoryRepository : ICategoryRepository
 {
     private readonly BookStoreContext _context;
 

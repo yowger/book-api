@@ -48,6 +48,7 @@ public static class ServiceExtensions
         services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
         services.AddOpenApi();
         services.AddSingleton<IBookRepository, InMemoryBooksRepository>();
+        services.AddScoped<ICategoryRepository, EntityFrameworkCategoryRepository>();
 
         return services;
     }

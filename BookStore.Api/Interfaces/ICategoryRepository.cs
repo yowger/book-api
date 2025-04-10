@@ -2,7 +2,7 @@ using BookStore.Api.Entities;
 
 namespace BookStore.Api.Interfaces;
 
-public interface ICategoryInterface
+public interface ICategoryRepository
 {
     Task<IEnumerable<Category>> GetAllAsync();
     Task<Category?> GetByIdAsync(Guid id);

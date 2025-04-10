@@ -10,7 +10,6 @@ builder.Services
 
 var app = builder.Build();
 app.Services.InitializeDb();
-app.MapBooksEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
@@ -20,6 +19,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapBooksEndpoints();
+app.MapCategoryEndpoints();
 
 app.Run();
 
