@@ -1,3 +1,5 @@
+namespace BookStore.Api.Dtos;
+
 public record BookDtoV1(
     Guid Id,
     string Title,

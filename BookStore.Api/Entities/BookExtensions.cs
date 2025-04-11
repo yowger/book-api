@@ -1,3 +1,5 @@
+using BookStore.Api.Dtos;
+
 namespace BookStore.Api.Entities;
 
 public static class BookExtensions

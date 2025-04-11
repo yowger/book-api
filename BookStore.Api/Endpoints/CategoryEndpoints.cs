@@ -1,3 +1,4 @@
+using BookStore.Api.Dtos;
 using BookStore.Api.Entities;
 using BookStore.Api.Interfaces;
 
@@ -12,13 +13,24 @@ public static class CategoryEndpoints
     {
         var categoriesGroup = routes.MapGroup($"/{routeName}");
 
-        categoriesGroup.MapPost("/", async (Category category, ICategoryRepository categoryRepository) =>
+        categoriesGroup.MapPost("/", async (CreateCategoryDtoV1 category, ICategoryRepository categoryRepository) =>
         {
-            // TODO: add find by name, return conflict
+            var existingCategory = await categoryRepository.GetByNameAsync(category.Name);
 
-            await categoryRepository.AddAsync(category);
+            if (existingCategory is not null)
+            {
+                return Results.Conflict($"Category '{category.Name}' already exists.");
+            }
 
-            return Results.Created($"/{routeName}/{category.Id}", category);
+            var newCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = category.Name
+            };
+
+            await categoryRepository.AddAsync(newCategory);
+
+            return Results.Created($"/{routeName}/{newCategory.Id}", newCategory.ToCategoryDtoV1());
         });
 
         categoriesGroup.MapGet("/", async (ICategoryRepository categoryRepository) =>

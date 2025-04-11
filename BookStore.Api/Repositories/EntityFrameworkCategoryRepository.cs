@@ -22,12 +22,28 @@ public class EntityFrameworkCategoryRepository : ICategoryRepository
 
     public async Task<IEnumerable<Category>> GetAllAsync()
     {
-        return await _context.Categories.ToListAsync();
+        return await _context.Categories
+            .AsNoTracking()
+            .Select(category => new Category
+            {
+                Id = category.Id,
+                Name = category.Name,
+            })
+            .ToListAsync();
     }
 
     public async Task<Category?> GetByIdAsync(Guid id)
     {
         return await _context.Categories.FindAsync(id);
+    }
+
+    public Task<Category?> GetByNameAsync(string name)
+    {
+        var normalizedNAme = name.Trim().ToLower();
+
+        return _context.Categories
+            .AsNoTracking()
+            .FirstOrDefaultAsync(category => category.Name == normalizedNAme);
     }
 
     public async Task UpdateAsync(Category category)
@@ -45,4 +61,6 @@ public class EntityFrameworkCategoryRepository : ICategoryRepository
             await _context.SaveChangesAsync();
         }
     }
+
+
 }

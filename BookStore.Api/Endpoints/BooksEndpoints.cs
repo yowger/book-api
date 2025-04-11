@@ -2,6 +2,7 @@ using BookStore.Api.MockData;
 using BookStore.Api.Entities;
 using BookStore.Api.Interfaces;
 using FluentValidation;
+using BookStore.Api.Dtos;
 
 namespace BookStore.Api.Endpoints;
 public static class BooksEndpoints

@@ -1,3 +1,4 @@
+using BookStore.Api.Dtos;
 using FluentValidation;
 
 namespace BookStore.Api.validators;
