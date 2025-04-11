@@ -59,14 +59,25 @@ public static class CategoryEndpoints
 
 
 
-        categoriesGroup.MapPut("/{id}", async (Guid id, ICategoryRepository categoryRepository) => {
+        categoriesGroup.MapPut("/{id}", async (Guid id, ICategoryRepository categoryRepository) =>
+        {
+            var existingCategory = await categoryRepository.GetByIdAsync(id);
 
+            if (existingCategory is null)
+            {
+                return Results.NotFound();
+            }
+
+            await categoryRepository.UpdateAsync(existingCategory);
+
+            return Results.NoContent();
         });
 
-        categoriesGroup.MapDelete("/{id}", async (Guid id, ICategoryRepository categoryRepository) => {
+        categoriesGroup.MapDelete("/{id}", async (Guid id, ICategoryRepository categoryRepository) =>
+        {
             var category = await categoryRepository.GetByIdAsync(id);
-            
-            if (category is null) 
+
+            if (category is null)
             {
                 return Results.NotFound();
             }
