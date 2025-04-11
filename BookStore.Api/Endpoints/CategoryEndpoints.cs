@@ -6,12 +6,11 @@ namespace BookStore.Api.Endpoints;
 
 public static class CategoryEndpoints
 {
-    const string routeName = "categories";
     const string getCategoryByIdEndpointName = "GetCategoryById";
 
     public static void MapCategoryEndpoints(this IEndpointRouteBuilder routes)
     {
-        var categoriesGroup = routes.MapGroup($"/{routeName}");
+        var categoriesGroup = routes.MapGroup("categories");
 
         categoriesGroup.MapPost("/", async (CreateCategoryDtoV1 category, ICategoryRepository categoryRepository) =>
         {
@@ -30,14 +29,20 @@ public static class CategoryEndpoints
 
             await categoryRepository.AddAsync(newCategory);
 
-            return Results.Created($"/{routeName}/{newCategory.Id}", newCategory.ToCategoryDtoV1());
+            return Results.CreatedAtRoute(
+                routeName: getCategoryByIdEndpointName,
+                routeValues: new { id = newCategory.Id },
+                value: newCategory.ToCategoryDtoV1()
+            );
         });
 
         categoriesGroup.MapGet("/", async (ICategoryRepository categoryRepository) =>
         {
             var categories = await categoryRepository.GetAllAsync();
 
-            return Results.Ok(categories);
+            var categoryDtos = categories.Select(category => category.ToCategoryDtoV1()).ToList();
+
+            return Results.Ok(categoryDtos);
         });
 
         categoriesGroup.MapGet("/{id}", async (Guid id, ICategoryRepository categoryRepository) =>
@@ -49,7 +54,7 @@ public static class CategoryEndpoints
                 return Results.NotFound();
             }
 
-            return Results.Ok(category);
+            return Results.Ok(category.ToCategoryDtoV1);
         }).WithName(getCategoryByIdEndpointName);
 
 
