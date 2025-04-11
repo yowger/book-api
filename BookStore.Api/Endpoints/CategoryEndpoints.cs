@@ -1,6 +1,7 @@
 using BookStore.Api.Dtos;
 using BookStore.Api.Entities;
 using BookStore.Api.Interfaces;
+using FluentValidation;
 
 namespace BookStore.Api.Endpoints;
 
@@ -12,19 +13,31 @@ public static class CategoryEndpoints
     {
         var categoriesGroup = routes.MapGroup("categories");
 
-        categoriesGroup.MapPost("/", async (CreateCategoryDtoV1 category, ICategoryRepository categoryRepository) =>
+        categoriesGroup.MapPost("/", async
+        (
+            CreateCategoryDtoV1 categoryDto,
+            IValidator<CreateCategoryDtoV1> validator,
+            ICategoryRepository categoryRepository
+        ) =>
         {
-            var existingCategory = await categoryRepository.GetByNameAsync(category.Name);
+            var validationResult = validator.Validate(categoryDto);
+
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
+            var existingCategory = await categoryRepository.GetByNameAsync(categoryDto.Name);
 
             if (existingCategory is not null)
             {
-                return Results.Conflict($"Category '{category.Name}' already exists.");
+                return Results.Conflict($"Category '{categoryDto.Name}' already exists.");
             }
 
             var newCategory = new Category
             {
                 Id = Guid.NewGuid(),
-                Name = category.Name
+                Name = categoryDto.Name
             };
 
             await categoryRepository.AddAsync(newCategory);
@@ -57,10 +70,21 @@ public static class CategoryEndpoints
             return Results.Ok(category.ToCategoryDtoV1);
         }).WithName(getCategoryByIdEndpointName);
 
-
-
-        categoriesGroup.MapPut("/{id}", async (Guid id, ICategoryRepository categoryRepository) =>
+        categoriesGroup.MapPut("/{id}", async
+        (
+            Guid id,
+            UpdateCategoryDtoV1 categoryDto,
+            IValidator<UpdateCategoryDtoV1> validator,
+            ICategoryRepository categoryRepository
+        ) =>
         {
+            var validationResult = validator.Validate(categoryDto);
+            
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
             var existingCategory = await categoryRepository.GetByIdAsync(id);
 
             if (existingCategory is null)
@@ -68,6 +92,7 @@ public static class CategoryEndpoints
                 return Results.NotFound();
             }
 
+            existingCategory.Name = categoryDto.Name;
             await categoryRepository.UpdateAsync(existingCategory);
 
             return Results.NoContent();

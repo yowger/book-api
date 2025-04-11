@@ -1,6 +1,7 @@
 namespace BookStore.Api.Dtos;
 
-public record BookDtoV1(
+public record BookDtoV1
+(
     Guid Id,
     string Title,
     string Description,
@@ -10,7 +11,8 @@ public record BookDtoV1(
     List<string> Categories
 );
 
-public record CreateBookDtoV1(
+public record CreateBookDtoV1
+(
     string Title,
     string Description,
     DateTime PublishedDate,
@@ -21,7 +23,7 @@ public record CreateBookDtoV1(
 
 public record UpdateBookDtoV1
 (
-     string Title,
+    string Title,
     string Description,
     DateTime PublishedDate,
     decimal Price,
