@@ -18,6 +18,11 @@ if (app.Environment.IsDevelopment())
     app.MapSeedsEndpoints();
 }
 
+// app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+
+
 app.UseHttpsRedirection();
 app.MapBooksEndpoints();
 app.MapCategoryEndpoints();

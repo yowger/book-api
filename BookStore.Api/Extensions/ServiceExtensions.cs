@@ -49,6 +49,9 @@ public static class ServiceExtensions
         services.AddOpenApi();
         services.AddSingleton<IBookRepository, InMemoryBooksRepository>();
         services.AddScoped<ICategoryRepository, EntityFrameworkCategoryRepository>();
+        services.AddCors();
+        services.AddAuthentication().AddJwtBearer();;
+        services.AddAuthorization();
 
         return services;
     }

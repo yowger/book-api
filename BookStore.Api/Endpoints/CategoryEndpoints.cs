@@ -47,7 +47,7 @@ public static class CategoryEndpoints
                 routeValues: new { id = newCategory.Id },
                 value: newCategory.ToCategoryDtoV1()
             );
-        });
+        }).RequireAuthorization();
 
         categoriesGroup.MapGet("/", async (ICategoryRepository categoryRepository) =>
         {
@@ -96,7 +96,7 @@ public static class CategoryEndpoints
             await categoryRepository.UpdateAsync(existingCategory);
 
             return Results.NoContent();
-        });
+        }).RequireAuthorization();
 
         categoriesGroup.MapDelete("/{id}", async (Guid id, ICategoryRepository categoryRepository) =>
         {
@@ -110,7 +110,7 @@ public static class CategoryEndpoints
             await categoryRepository.DeleteAsync(id);
 
             return Results.NoContent();
-        });
+        }).RequireAuthorization();
 
     }
 }
