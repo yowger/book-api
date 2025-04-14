@@ -75,6 +75,13 @@ public static class ServiceExtensions
         })
             .AddJwtBearer(jwtOptions =>
             {
+                var signInKey = configuration["Jwt:SigningKey"];
+                
+                if (string.IsNullOrEmpty(signInKey))
+                {
+                    throw new ArgumentException("Missing Jwt:SigningKey");
+                }
+
                 jwtOptions.Authority = configuration["Jwt:Issuer"];
                 jwtOptions.Audience = configuration["Jwt:Audience"];
                 jwtOptions.TokenValidationParameters = new TokenValidationParameters
@@ -85,7 +92,7 @@ public static class ServiceExtensions
                     ValidIssuers = configuration.GetSection("Jwt:ValidIssuers").Get<string[]>(),
                     ValidAudiences = configuration.GetSection("Jwt:Audience").Get<string[]>(),
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["Jwt:SigningKey"])
+                        Encoding.UTF8.GetBytes(signInKey)
                     )
                 };
 
