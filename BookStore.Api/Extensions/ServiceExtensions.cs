@@ -62,9 +62,9 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection AddAuthServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddAuthServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddIdentity<AppUser, IdentityRole>()
            .AddEntityFrameworkStores<BookStoreContext>()
            .AddDefaultTokenProviders();
 
@@ -90,6 +90,11 @@ public static class ServiceExtensions
                 };
 
                 jwtOptions.MapInboundClaims = true;
+
+                if (environment.IsDevelopment())
+                {
+                    jwtOptions.RequireHttpsMetadata = false;
+                }
             });
 
         services.AddAuthorization();
