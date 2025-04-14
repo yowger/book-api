@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStore.Api.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    [Migration("20250413164303_Identity")]
-    partial class Identity
+    [Migration("20250414084341_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
