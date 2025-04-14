@@ -3,6 +3,7 @@ using BookStore.Api.Data;
 using BookStore.Api.Entities;
 using BookStore.Api.Interfaces;
 using BookStore.Api.Repositories;
+using BookStore.Api.Service;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -59,6 +60,14 @@ public static class ServiceExtensions
     public static IServiceCollection AddValidation(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
+
+        return services;
+    }
+
+    public static IServiceCollection AddTokenService(this IServiceCollection services)
+    {
+        services.AddScoped<ITokenService, TokenService>();
+
         return services;
     }
 
@@ -76,7 +85,7 @@ public static class ServiceExtensions
             .AddJwtBearer(jwtOptions =>
             {
                 var signInKey = configuration["Jwt:SigningKey"];
-                
+
                 if (string.IsNullOrEmpty(signInKey))
                 {
                     throw new ArgumentException("Missing Jwt:SigningKey");

@@ -2,12 +2,15 @@ using BookStore.Api.Data;
 using BookStore.Api.Data.seed;
 using BookStore.Api.Endpoints;
 using BookStore.Api.Extensions;
+using BookStore.Api.Interfaces;
+using BookStore.Api.Service;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddDatabaseContext(builder.Configuration, builder.Environment)
     .AddRepositories()
+    .AddTokenService()
     .AddValidation()
     .AddAuthServices(builder.Configuration, builder.Environment)
     .AddOpenApi();
