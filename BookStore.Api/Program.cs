@@ -6,7 +6,10 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddDatabaseContext(builder.Configuration, builder.Environment)
-    .AddApplicationServices();
+    .AddRepositories()
+    .AddValidation()
+    .AddAuthServices(builder.Configuration)
+    .AddOpenApi();
 
 var app = builder.Build();
 app.Services.InitializeDb();
@@ -18,11 +21,9 @@ if (app.Environment.IsDevelopment())
     app.MapSeedsEndpoints();
 }
 
-// app.UseCors();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 app.UseHttpsRedirection();
 app.MapBooksEndpoints();
 app.MapCategoryEndpoints();

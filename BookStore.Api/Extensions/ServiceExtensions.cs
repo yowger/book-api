@@ -1,8 +1,12 @@
 using BookStore.Api.Data;
+using BookStore.Api.Entities;
 using BookStore.Api.Interfaces;
 using BookStore.Api.Repositories;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookStore.Api.Extensions;
 
@@ -43,14 +47,24 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
-        services.AddOpenApi();
         services.AddSingleton<IBookRepository, InMemoryBooksRepository>();
         services.AddScoped<ICategoryRepository, EntityFrameworkCategoryRepository>();
-        services.AddCors();
-        services.AddAuthentication().AddJwtBearer();;
+
+        return services;
+    }
+
+    public static IServiceCollection AddValidation(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
+        return services;
+    }
+
+    public static IServiceCollection AddAuthServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        // services.AddIdentity
+
         services.AddAuthorization();
 
         return services;

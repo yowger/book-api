@@ -1,9 +1,10 @@
 using BookStore.Api.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Api.Data;
 
-public class BookStoreContext : DbContext
+public class BookStoreContext : IdentityDbContext<AppUser>
 {
     public DbSet<Book> Books { get; set; }
     public DbSet<BookCategory> BookCategories { get; set; }
