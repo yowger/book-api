@@ -1,3 +1,4 @@
+using System.Text;
 using BookStore.Api.Data;
 using BookStore.Api.Entities;
 using BookStore.Api.Interfaces;
@@ -63,7 +64,33 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddAuthServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // services.AddIdentity
+        services.AddIdentity<IdentityUser, IdentityRole>()
+           .AddEntityFrameworkStores<BookStoreContext>()
+           .AddDefaultTokenProviders();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(jwtOptions =>
+            {
+                jwtOptions.Authority = configuration["Jwt:Issuer"];
+                jwtOptions.Audience = configuration["Jwt:Audience"];
+                jwtOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuers = configuration.GetSection("Jwt:ValidIssuers").Get<string[]>(),
+                    ValidAudiences = configuration.GetSection("Jwt:Audience").Get<string[]>(),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configuration["Jwt:SigningKey"])
+                    )
+                };
+
+                jwtOptions.MapInboundClaims = true;
+            });
 
         services.AddAuthorization();
 
