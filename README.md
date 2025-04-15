@@ -1,3 +1,9 @@
+## Features
+- CRUD
+- Authentication using JWT and ASP.NET Core Identity 
+- Role-based Authorization 
+- Entity Framework Core 
+
 ## OpenAPI Docs (Development Only)
 
 The API exposes OpenAPI documentation when running in **development mode**.
@@ -7,3 +13,4 @@ The API exposes OpenAPI documentation when running in **development mode**.
 
 - **Scalar UI (Interactive Docs):**  
   [`https://localhost:5041/scalar/v1`](https://localhost:5041/scalar/v1)
+
